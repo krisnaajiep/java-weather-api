@@ -12,6 +12,7 @@ Version 1.0
 
 import com.krisnaajiep.service.WeatherService;
 import com.krisnaajiep.util.QueryParamParser;
+import com.krisnaajiep.util.RedisClient;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -25,10 +26,12 @@ public class WeatherHandler implements HttpHandler {
     private static final String CONTENT_TYPE_TEXT = "text/plain";
     private final WeatherService service;
     private final QueryParamParser queryParamParser;
+    private final RedisClient cache;
 
-    public WeatherHandler() {
+    public WeatherHandler() throws IllegalStateException {
         this.service = new WeatherService();
         this.queryParamParser = new QueryParamParser();
+        this.cache = new RedisClient();
     }
 
     @Override
@@ -52,7 +55,13 @@ public class WeatherHandler implements HttpHandler {
                 return;
             }
 
+            if (cache.get(location) != null) {
+                sendResponse(200, cache.get(location), CONTENT_TYPE_JSON, exchange);
+                return;
+            }
+
             HttpResponse<String> response = service.getWeather(location);
+            cache.set(location, response.body());
             sendResponse(response.statusCode(), response.body(), CONTENT_TYPE_JSON, exchange);
         } catch (IOException e) {
             sendResponse(500, e.getMessage(), CONTENT_TYPE_TEXT, exchange);
@@ -61,6 +70,7 @@ public class WeatherHandler implements HttpHandler {
             sendResponse(503, e.getMessage(), CONTENT_TYPE_TEXT, exchange);
         } finally {
             exchange.close();
+            cache.close();
         }
     }
 

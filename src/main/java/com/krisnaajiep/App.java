@@ -16,9 +16,6 @@ public class App {
             }
 
             startServer();
-        } catch (NumberFormatException e) {
-            System.err.println("Port must be a number");
-            System.exit(1);
         } catch (IOException | IllegalArgumentException | IllegalStateException e) {
             System.err.println("Error: " + e.getMessage());
             System.exit(1);
@@ -32,7 +29,7 @@ public class App {
                     throw new IllegalArgumentException("Missing port argument");
                 }
 
-                setPort(Integer.parseInt(args[1]));
+                setPort(args[1]);
                 return;
             }
         }
@@ -40,7 +37,15 @@ public class App {
         throw new IllegalArgumentException("Invalid argument: " + args[0]);
     }
 
-    private static void setPort(int newPort) {
+    private static void setPort(String newPortStr) {
+        int newPort;
+
+        try {
+            newPort = Integer.parseInt(newPortStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid port number: " + newPortStr);
+        }
+
         if (newPort < 1 || newPort > 65535) {
             throw new IllegalArgumentException("Port must be between 1 and 65535");
         }
