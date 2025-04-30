@@ -15,6 +15,7 @@ import com.krisnaajiep.util.QueryParamParser;
 import com.krisnaajiep.util.RedisClient;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import redis.clients.jedis.exceptions.JedisException;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
@@ -66,6 +67,8 @@ public class WeatherHandler extends MainHandler implements HttpHandler {
             sendResponse(500, e.getMessage(), CONTENT_TYPE_TEXT, exchange);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            sendResponse(503, e.getMessage(), CONTENT_TYPE_TEXT, exchange);
+        } catch (JedisException e){
             sendResponse(503, e.getMessage(), CONTENT_TYPE_TEXT, exchange);
         } finally {
             exchange.close();
