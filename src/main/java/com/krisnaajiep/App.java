@@ -1,5 +1,6 @@
 package com.krisnaajiep;
 
+import com.krisnaajiep.handler.RateLimiterHandler;
 import com.krisnaajiep.handler.WeatherHandler;
 import com.sun.net.httpserver.HttpServer;
 
@@ -57,7 +58,7 @@ public class App {
         System.out.println("Starting server on port " + port + "...");
 
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/", new WeatherHandler());
+        server.createContext("/", new RateLimiterHandler(new WeatherHandler()));
         server.setExecutor(null);
         server.start();
 
