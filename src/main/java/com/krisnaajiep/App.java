@@ -19,7 +19,7 @@ public class App {
         } catch (NumberFormatException e) {
             System.err.println("Port must be a number");
             System.exit(1);
-        } catch (IOException | IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException | IllegalStateException e) {
             System.err.println("Error: " + e.getMessage());
             System.exit(1);
         }

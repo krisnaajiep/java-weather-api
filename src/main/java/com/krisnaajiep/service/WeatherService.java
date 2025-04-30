@@ -17,11 +17,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class WeatherService {
-    private static final String API_BASE_URL = System.getenv("API_BASE_URL");
-    private static final String API_KEY = System.getenv("API_KEY");
+    private final String apiKey;
     private final HttpClient httpClient;
 
     public WeatherService() {
+        this.apiKey = getApiKey();
         this.httpClient = HttpClient.newHttpClient();
     }
 
@@ -36,7 +36,18 @@ public class WeatherService {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
+    private String getApiKey() {
+        String value = System.getenv("API_KEY");
+
+        if (value == null) {
+            throw new IllegalStateException("Missing environment variable: " + "API_KEY");
+        }
+
+        return value;
+    }
+
     private String getFullUrl(String location) {
-        return API_BASE_URL + "/" + location + "?key=" + API_KEY + "&include=days";
+        return "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/"
+                + location + "?key=" + apiKey + "&include=days";
     }
 }
