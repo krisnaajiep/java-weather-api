@@ -7,9 +7,22 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+/**
+ * The {@code App} class provides the entry point and main application logic to start an HTTP server.
+ */
 public class App {
+    /**
+     * The port number on which the HTTP server will listen for incoming connections.<br>
+     * (Default value: 8080)
+     */
     private static int port = 8080;
 
+    /**
+     * The entry point of the application. Initializes the HTTP server and processes command-line arguments
+     * to configure the server settings such as the port number.
+     *
+     * @param args the command-line arguments.
+     */
     public static void main(String[] args) {
         try {
             if (args.length > 0) {
@@ -23,6 +36,12 @@ public class App {
         }
     }
 
+    /**
+     * Parses the command-line arguments and processes configuration options.
+     * This method checks for specific arguments like "-p" or "--port" to set the server port.
+     *
+     * @param args the array of command-line arguments passed to the application.
+     */
     private static void parseArgs(String[] args) {
         for (String arg : args) {
             if (arg.equals("-p") || arg.equals("--port")) {
@@ -38,6 +57,15 @@ public class App {
         throw new IllegalArgumentException("Invalid argument: " + args[0]);
     }
 
+    /**
+     * Sets the port number for the server after validating the input string.
+     * The port number must be a valid integer between 1 and 65535.
+     *
+     * @param newPortStr the string representing the new port number to be set.
+     *                   It must be a valid numeric string within the acceptable range.
+     * @throws IllegalArgumentException if the provided string is not a valid integer
+     *                                  or if the resulting port number is outside the valid range.
+     */
     private static void setPort(String newPortStr) {
         int newPort;
 
@@ -54,6 +82,11 @@ public class App {
         port = newPort;
     }
 
+    /**
+     * Starts and configures the HTTP server instance.
+     *
+     * @throws IOException if an I/O error occurs during server initialization.
+     */
     private static void startServer() throws IOException {
         System.out.println("Starting server on port " + port + "...");
 

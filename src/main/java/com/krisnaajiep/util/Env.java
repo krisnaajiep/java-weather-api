@@ -12,7 +12,20 @@ Version 1.0
 
 import java.util.Optional;
 
+/**
+ * The {@code Env} class provides utility methods for retrieving environment variables.
+ * This class allows you to retrieve mandatory or optional environment variables
+ * from the system's environment configuration.
+ */
 public class Env {
+    /**
+     * Retrieves the value of the specified environment variable.
+     * If the environment variable is not set, an {@code IllegalStateException} is thrown.
+     *
+     * @param key the name of the environment variable to retrieve
+     * @return the value of the specified environment variable
+     * @throws IllegalStateException if the environment variable is not found
+     */
     public static String get (String key) {
         String value = System.getenv(key);
 
@@ -23,6 +36,14 @@ public class Env {
         return value;
     }
 
+    /**
+     * Retrieves the value of the specified environment variable as an {@code Optional}.
+     * If the environment variable is not set, the returned {@code Optional} will be empty.
+     *
+     * @param key the name of the environment variable to retrieve
+     * @return an {@code Optional} containing the value of the specified environment variable,
+     *         or an empty {@code Optional} if the variable is not set
+     */
     public static Optional<String> getOptional (String key) {
         return Optional.ofNullable(System.getenv(key));
     }
