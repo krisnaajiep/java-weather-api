@@ -10,6 +10,7 @@ Created on 29/04/25 18.15
 Version 1.0
 */
 
+import com.krisnaajiep.exception.HttpResponseException;
 import com.krisnaajiep.service.WeatherService;
 import com.krisnaajiep.util.QueryParamParser;
 import com.krisnaajiep.util.RedisClient;
@@ -36,26 +37,22 @@ public class WeatherHandler extends MainHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         try (RedisClient cache = new RedisClient()) {
             if (!exchange.getRequestURI().getPath().equals("/")) {
-                sendResponse(404, "Not found", CONTENT_TYPE_TEXT, exchange);
-                return;
+                throw new HttpResponseException(404, "Not found", CONTENT_TYPE_TEXT);
             }
 
             if (!isAllowedMethod(exchange.getRequestMethod())) {
-                sendResponse(405, "Method not allowed", CONTENT_TYPE_TEXT, exchange);
-                return;
+                throw new HttpResponseException(405, "Method not allowed", CONTENT_TYPE_TEXT);
             }
 
             String query = exchange.getRequestURI().getQuery();
             String location = queryParamParser.parse(query).get("location");
-
             if (location == null) {
-                sendResponse(400, "Missing location parameter", CONTENT_TYPE_TEXT, exchange);
-                return;
+                throw new HttpResponseException(400, "Missing location parameter", CONTENT_TYPE_TEXT);
             }
 
-            if (cache.get(location) != null) {
-                sendResponse(200, cache.get(location), CONTENT_TYPE_JSON, exchange);
-                return;
+            String cacheData = cache.get(location);
+            if (cacheData != null) {
+                throw new HttpResponseException(200, cacheData, CONTENT_TYPE_JSON);
             }
 
             HttpResponse<String> response = service.getWeather(location);
@@ -66,8 +63,10 @@ public class WeatherHandler extends MainHandler implements HttpHandler {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             sendResponse(503, e.getMessage(), CONTENT_TYPE_TEXT, exchange);
-        } catch (JedisException e){
+        } catch (JedisException e) {
             sendResponse(503, e.getMessage(), CONTENT_TYPE_TEXT, exchange);
+        } catch (HttpResponseException e){
+            sendResponse(e.getStatusCode(), e.getBody(),e.getContentType(), exchange);
         } finally {
             exchange.close();
         }
