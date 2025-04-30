@@ -17,10 +17,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.http.HttpResponse;
 
-public class WeatherHandler implements HttpHandler {
+public class WeatherHandler extends MainHandler implements HttpHandler {
     private static final String[] ALLOWED_METHODS = {"GET"};
     private static final String CONTENT_TYPE_JSON = "application/json";
     private static final String CONTENT_TYPE_TEXT = "text/plain";
@@ -82,27 +81,5 @@ public class WeatherHandler implements HttpHandler {
         }
 
         return false;
-    }
-
-    private void sendResponse(
-            int statusCode,
-            String body,
-            String contentType,
-            HttpExchange exchange
-    ) throws IOException {
-        exchange.getResponseHeaders().add("Content-Type", contentType);
-
-        if (body == null || body.isBlank()) {
-            exchange.sendResponseHeaders(statusCode, -1);
-        } else {
-            writeResponseBody(exchange, statusCode, body);
-        }
-    }
-
-    private void writeResponseBody(HttpExchange exchange, int statusCode, String body) throws IOException {
-        exchange.sendResponseHeaders(statusCode, body.getBytes().length);
-        try (OutputStream os = exchange.getResponseBody()) {
-            os.write(body.getBytes());
-        }
     }
 }
