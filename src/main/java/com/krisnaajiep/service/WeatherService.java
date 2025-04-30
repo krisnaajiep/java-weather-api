@@ -10,6 +10,8 @@ Created on 30/04/25 06.32
 Version 1.0
 */
 
+import com.krisnaajiep.util.Env;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -21,7 +23,7 @@ public class WeatherService {
     private final HttpClient httpClient;
 
     public WeatherService() {
-        this.apiKey = getApiKey();
+        this.apiKey = Env.get("API_KEY");
         this.httpClient = HttpClient.newHttpClient();
     }
 
@@ -36,18 +38,8 @@ public class WeatherService {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    private String getApiKey() {
-        String value = System.getenv("API_KEY");
-
-        if (value == null) {
-            throw new IllegalStateException("Missing environment variable: " + "API_KEY");
-        }
-
-        return value;
-    }
-
     private String getFullUrl(String location) {
         return "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/"
-                + location + "?key=" + apiKey + "&include=days";
+                + location + "/today?key=" + apiKey + "&include=days";
     }
 }
