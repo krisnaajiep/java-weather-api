@@ -26,17 +26,15 @@ public class WeatherHandler extends MainHandler implements HttpHandler {
     private static final String CONTENT_TYPE_TEXT = "text/plain";
     private final WeatherService service;
     private final QueryParamParser queryParamParser;
-    private final RedisClient cache;
 
     public WeatherHandler() throws IllegalStateException {
         this.service = new WeatherService();
         this.queryParamParser = new QueryParamParser();
-        this.cache = new RedisClient();
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        try {
+        try (RedisClient cache = new RedisClient()) {
             if (!exchange.getRequestURI().getPath().equals("/")) {
                 sendResponse(404, "Not found", CONTENT_TYPE_TEXT, exchange);
                 return;
@@ -72,7 +70,6 @@ public class WeatherHandler extends MainHandler implements HttpHandler {
             sendResponse(503, e.getMessage(), CONTENT_TYPE_TEXT, exchange);
         } finally {
             exchange.close();
-            cache.close();
         }
     }
 
