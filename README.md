@@ -10,6 +10,7 @@
 * [Usage](#usage)
 * [Project Status](#project-status)
 * [Acknowledgements](#acknowledgements)
+* [License](#license)
 
 ## General Information
 Java Weather APi is a weather API that fetches and returns weather data from [Visual Crossing's API](https://www.visualcrossing.com/weather-api). It uses [Redis](https://redis.io) for in-memory caching and [Jedis](https://github.com/redis/jedis) as the client. This project is designed to explore and practice working with the third party APIs, caching and environment variables in Java.
@@ -95,3 +96,7 @@ Project is: _complete_.
 
 ## Acknowledgements
 This project was inspired by [roadmap.sh](https://roadmap.sh/projects/weather-api-wrapper-service).
+
+## License
+
+This project is licensed under the MIT License—see the [LICENSE](./LICENSE) file for details.
