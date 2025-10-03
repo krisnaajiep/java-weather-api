@@ -59,7 +59,7 @@ How to install:
 4. Copy the JAR file from the target/ directory
 
    ```bash
-   cp target/java-weather-api-1.0-SNAPSHOT.war weather-api.war 
+   cp target/java-weather-api-1.0-SNAPSHOT-jar-with-dependencies.jar weather-api.jar 
    ```
 
 5. Set environment variables
